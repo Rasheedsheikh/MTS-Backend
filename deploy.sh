@@ -1,27 +1,45 @@
 #!/bin/bash
 
-# Variables
-REMOTE_USER="ubuntu"                # Your server username
-REMOTE_HOST="3.7.251.62"           # Your server IP
-REMOTE_APP_NAME="mts-backend"       # Name for your Docker container
-LOCAL_IMAGE_NAME="mts-backend:latest" # Docker image tag locally
-REMOTE_IMAGE_NAME="mts-backend:latest" # Docker image tag on server
+# ======================
+# Deployment variables
+# ======================
+REMOTE_USER="ubuntu"                 # Remote server username
+REMOTE_HOST="3.7.251.62"             # Remote server IP
+REMOTE_APP_NAME="mts-backend"        # Docker container name
+REMOTE_APP_DIR="~/mts-backend"       # Directory on remote server
 REMOTE_PORT=3000                     # Port to expose
+PEM_KEY="./web-server.pem"           # Path to your PEM key file
 
-# Build Docker image locally
-echo "Building Docker image..."
-docker build -t $LOCAL_IMAGE_NAME .
+# SSH options
+SSH_OPTS="-i $PEM_KEY -o StrictHostKeyChecking=no"
 
-# Copy image to remote server
-echo "Saving and sending image to server..."
-docker save $LOCAL_IMAGE_NAME | ssh $REMOTE_USER@$REMOTE_HOST "docker load"
+# ======================
+# Helper function
+# ======================
+run_remote() {
+  ssh $SSH_OPTS $REMOTE_USER@$REMOTE_HOST "$1"
+}
 
-# Stop existing container (if running) and remove it
-echo "Stopping existing container (if any)..."
-ssh $REMOTE_USER@$REMOTE_HOST "docker rm -f $REMOTE_APP_NAME || true"
+# ======================
+# Deployment process
+# ======================
+echo "🚀 Starting deployment to $REMOTE_HOST..."
 
-# Run new container
-echo "Starting new container..."
-ssh $REMOTE_USER@$REMOTE_HOST "docker run -d --name $REMOTE_APP_NAME -p $REMOTE_PORT:3000 $REMOTE_IMAGE_NAME"
+# Step 1: Copy project files to server
+echo "📦 Uploading project to server..."
+ssh $SSH_OPTS $REMOTE_USER@$REMOTE_HOST "mkdir -p $REMOTE_APP_DIR"
+scp $SSH_OPTS -r ./* $REMOTE_USER@$REMOTE_HOST:$REMOTE_APP_DIR
 
-echo "Deployment complete!"
+# Step 2: Build Docker image on the server
+echo "🐳 Building Docker image on remote server..."
+run_remote "cd $REMOTE_APP_DIR && docker build -t $REMOTE_APP_NAME ."
+
+# Step 3: Stop and remove old container (if running)
+echo "🛑 Stopping old container (if any)..."
+run_remote "docker rm -f $REMOTE_APP_NAME || true"
+
+# Step 4: Run the new container with environment variables
+echo "🚢 Starting new container..."
+run_remote "cd $REMOTE_APP_DIR && docker run -d --name $REMOTE_APP_NAME --env-file .env -p $REMOTE_PORT:3000 $REMOTE_APP_NAME"
+
+echo "✅ Deployment complete!"

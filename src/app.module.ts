@@ -7,6 +7,7 @@ import { PartnerDetailsModule } from './partner-details/partner-details.module';
 import { MerchantDetailsModule } from './merchant-details/merchant-details.module';
 import { DigitalMarketingModule } from './digital-marketing/digital-marketing.module';
 import { AdvertisementsModule } from './advertisements/advertisements.module';
+import { AdvertisementRegistrationModule } from './advertisement-registration/advertisement-registration.module';
 import * as crypto from 'crypto';
 (global as any).crypto = crypto;
 
@@ -37,6 +38,7 @@ import * as crypto from 'crypto';
     MerchantDetailsModule,
     DigitalMarketingModule,
     AdvertisementsModule,
+    AdvertisementRegistrationModule,
   ],
 })
 export class AppModule {}
