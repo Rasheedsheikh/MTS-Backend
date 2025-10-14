@@ -1,15 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { AdvertisementRegistrationService } from './advertisement-registration.service';
 import { CreateAdvertisementRegistrationDto } from './dto/create-advertisement-registration.dto';
 import { UpdateAdvertisementRegistrationDto } from './dto/update-advertisement-registration.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('advertisement-registration')
 export class AdvertisementRegistrationController {
   constructor(private readonly advertisementRegistrationService: AdvertisementRegistrationService) {}
 
-  @Post()
-  create(@Body() createAdvertisementRegistrationDto: CreateAdvertisementRegistrationDto) {
-    return this.advertisementRegistrationService.create(createAdvertisementRegistrationDto);
+ @Post()
+  @UseInterceptors(FileInterceptor('image'))
+  create(@Body() dto: CreateAdvertisementRegistrationDto, @UploadedFile() file?: Express.Multer.File) {
+    return this.advertisementRegistrationService.create(dto, file);
   }
 
   @Get()
