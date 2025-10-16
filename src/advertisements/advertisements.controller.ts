@@ -25,11 +25,13 @@ export class AdvertisementsController {
   }
 
   @Patch(':advertisement_id')
+  @UseInterceptors(FileInterceptor('image'))
   update(
     @Param('advertisement_id') advertisement_id: string,
     @Body() dto: UpdateAdvertisementDto,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
-    return this.adsService.update(advertisement_id, dto);
+    return this.adsService.update(advertisement_id, dto, file);
   }
 
   @Delete(':advertisement_id')

@@ -13,6 +13,11 @@ export class CreatePartnerDetailDto {
 	@IsString()
 	mobile?: string;
 
+
+		@IsOptional()
+	@IsString()
+	image?: string;
+
 	@IsOptional()
 	@IsString()
 	location?: string;

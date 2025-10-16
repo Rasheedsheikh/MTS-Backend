@@ -103,6 +103,21 @@ export class MerchantDetailsService {
 		const merchant = this.repo.create({ ...dto, shopImage });
 		return await this.repo.save(merchant);
 	  }
+
+	  // merchant-details.service.ts
+
+async getCategoriesAndShopNames() {
+  const merchants = await this.repo.find({
+    select: ['category', 'businessName'],
+  });
+
+  // Extract unique categories and shop names
+  const categories = [...new Set(merchants.map((m) => m.category).filter(Boolean))];
+  const shopNames = [...new Set(merchants.map((m) => m.businessName).filter(Boolean))];
+
+  return { categories, shopNames };
+}
+
 }
 
 

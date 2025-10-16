@@ -44,10 +44,17 @@ export class AdvertisementsService {
     return ad;
   }
 
-  async update(advertisement_id: string, dto: UpdateAdvertisementDto) {
-    const ad = await this.findOne(advertisement_id);
-    Object.assign(ad, dto);
-    return this.adRepository.save(ad);
+  async update(advertisement_id: string, dto: UpdateAdvertisementDto, file?: Express.Multer.File) {
+    if (file) {
+      const key = `advertisements/${advertisement_id}/${Date.now()}-${file.originalname}`;
+      const url = await this.s3Service.uploadObject({ key, body: file.buffer, contentType: file.mimetype });
+      dto.imageUrl = url;
+    }
+    
+    // existing update logic here
+    const entity = await this.findOne(advertisement_id);
+    Object.assign(entity, dto);
+    return this.adRepository.save(entity);
   }
 
   async remove(advertisement_id: string) {

@@ -21,6 +21,9 @@ export class PartnerDetail {
 	location?: string;
 
 	@Column({ nullable: true })
+	image?: string; 
+
+	@Column({ nullable: true })
 	fullNameAsPerBank?: string; // Full Name (as per bank)
 
 	@Column({ nullable: true })
@@ -36,7 +39,7 @@ export class PartnerDetail {
 	address?: string; // Address
 
 	@Column({ nullable: true, unique: true })
-	panNumber?: string; // PAN Number (India)
+	panNumber?: string; // PAN Number (India) 
 
 	// Bank details
 	@Column({ nullable: true })

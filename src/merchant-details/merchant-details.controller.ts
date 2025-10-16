@@ -9,16 +9,7 @@ import { S3Service } from '../common/s3.service';
 export class MerchantDetailsController {
 	constructor(private readonly service: MerchantDetailsService, private readonly s3: S3Service) {}
 
-	// @Post()
-	// @UseInterceptors(FileInterceptor('file'))
-	// async create(@Body() dto: CreateMerchantDetailDto, @UploadedFile() file?: Express.Multer.File) {
-	// 	if (file) {
-	// 		const key = `merchant-shops/temp/${Date.now()}-${file.originalname}`;
-	// 		const url = await this.s3.uploadObject({ key, body: file.buffer, contentType: file.mimetype });
-	// 		dto.shopImage = url;
-	// 	}
-	// 	return this.service.create(dto);
-	// }
+
 
 
 	  @Post('add-service')
@@ -77,6 +68,14 @@ export class MerchantDetailsController {
 			return { url, merchant: updated };
 		});
 	}
+
+	// merchant-details.controller.ts
+
+@Get('categories-shops')
+getCategoriesAndShopNames() {
+  return this.service.getCategoriesAndShopNames();
+}
+
 }
 
 

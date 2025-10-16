@@ -8,6 +8,9 @@ import { MerchantDetailsModule } from './merchant-details/merchant-details.modul
 import { DigitalMarketingModule } from './digital-marketing/digital-marketing.module';
 import { AdvertisementsModule } from './advertisements/advertisements.module';
 import { AdvertisementRegistrationModule } from './advertisement-registration/advertisement-registration.module';
+import { FreeBookingsModule } from './free-bookings/free-bookings.module';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { MailerModule } from '@nestjs-modules/mailer';
 import * as crypto from 'crypto';
 (global as any).crypto = crypto;
 
@@ -32,6 +35,26 @@ import * as crypto from 'crypto';
       }),
       inject: [ConfigService],
     }),
+
+    // Mailer module
+   MailerModule.forRootAsync({
+  imports: [ConfigModule],
+  useFactory: (configService: ConfigService) => ({
+    transport: {
+      host: configService.get<string>('SMTP_HOST'),
+      port: configService.get<number>('SMTP_PORT'),
+      auth: {
+        user: configService.get<string>('SMTP_USER'),
+        pass: configService.get<string>('SMTP_PASS'),
+      },
+    },
+    defaults: {
+      from: '"MTS Support" <mtsindialtd999@gmail.com>',
+    },
+  }),
+  inject: [ConfigService],
+}),
+
     UsersModule,
     AuthModule,
     PartnerDetailsModule,
@@ -39,6 +62,7 @@ import * as crypto from 'crypto';
     DigitalMarketingModule,
     AdvertisementsModule,
     AdvertisementRegistrationModule,
+    FreeBookingsModule,
   ],
 })
 export class AppModule {}
