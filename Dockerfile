@@ -1,5 +1,5 @@
-# Multi-stage build for minimal image size
-FROM node:20-alpine AS builder
+# Use Node 20 Alpine as base
+FROM node:18-alpine
 
 # Set working directory
 WORKDIR /app
@@ -7,34 +7,17 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production && \
-    npm cache clean --force
+# Install all dependencies (including devDependencies for NestJS build)
+RUN npm ci
 
-# Copy source code
+# Copy the rest of the source code
 COPY . .
 
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production && \
-    npm cache clean --force
-
-# Copy built application from builder stage
-COPY --from=builder /app/dist ./dist
-
-# Expose port 3000
+# Expose application port
 EXPOSE 3000
 
-# Run the application
+# Run the built app
 CMD ["node", "dist/main"]
