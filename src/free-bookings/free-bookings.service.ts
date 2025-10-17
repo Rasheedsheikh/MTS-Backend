@@ -19,7 +19,7 @@ async create(freeBookingData: Partial<FreeBooking>) {
 
   try {
     await this.mailerService.sendMail({
-      to: 'rasheedsheikh9786@gmail.com', // 👈 your target email
+      to: 'mtsindialtd999@gmail.com', // 👈 your target email
       subject: `New Free Booking from ${savedFreeBooking.name}`,
       html: `
         <h2>New Booking Received</h2>

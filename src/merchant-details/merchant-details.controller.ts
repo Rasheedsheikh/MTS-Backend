@@ -23,6 +23,11 @@ export class MerchantDetailsController {
 		return this.service.findAll();
 	}
 
+	@Get('meta/categories-shops')
+getCategoriesAndShopNames() {
+  return this.service.getCategoriesAndShopNames();
+}
+
 	@Get(':id')
 	findOne(@Param('id') id: string) {
 		return this.service.findOne(id);
@@ -71,10 +76,7 @@ export class MerchantDetailsController {
 
 	// merchant-details.controller.ts
 
-@Get('categories-shops')
-getCategoriesAndShopNames() {
-  return this.service.getCategoriesAndShopNames();
-}
+
 
 }
 
