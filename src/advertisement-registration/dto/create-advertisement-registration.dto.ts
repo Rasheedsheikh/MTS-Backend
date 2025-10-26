@@ -1,5 +1,5 @@
-// src/advertisements/dto/create-advertisement.dto.ts
-import { IsString, IsOptional, IsBoolean, IsDateString } from 'class-validator';
+// src/advertisement-registration/dto/create-advertisement-registration.dto.ts
+import { IsString, IsOptional, IsBoolean, IsDateString, IsNumber, IsEnum } from 'class-validator';
 
 export class CreateAdvertisementRegistrationDto {
   @IsString()
@@ -12,6 +12,9 @@ export class CreateAdvertisementRegistrationDto {
   @IsString()
   location: string;
 
+  @IsString()
+  mobileNumber: string;
+
   // This will be filled after upload
   @IsOptional()
   @IsString()
@@ -19,7 +22,7 @@ export class CreateAdvertisementRegistrationDto {
 
   @IsOptional()
   @IsString()
-sliderType?: string;
+  sliderType?: string;
 
   @IsOptional()
   @IsDateString()
@@ -28,6 +31,18 @@ sliderType?: string;
   @IsOptional()
   @IsDateString()
   endDate?: string;
+
+  @IsOptional()
+  @IsNumber()
+  amount?: number;
+
+  @IsOptional()
+  @IsEnum(['pending', 'completed', 'failed'])
+  paymentStatus?: 'pending' | 'completed' | 'failed';
+
+  @IsOptional()
+  @IsBoolean()
+  isPaymentCompleted?: boolean;
 
   @IsOptional()
   @IsBoolean()

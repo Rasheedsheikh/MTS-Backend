@@ -9,10 +9,10 @@ import { DigitalMarketingModule } from './digital-marketing/digital-marketing.mo
 import { AdvertisementsModule } from './advertisements/advertisements.module';
 import { AdvertisementRegistrationModule } from './advertisement-registration/advertisement-registration.module';
 import { FreeBookingsModule } from './free-bookings/free-bookings.module';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+// import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { MailerModule } from '@nestjs-modules/mailer';
-import * as crypto from 'crypto';
-(global as any).crypto = crypto;
+import { MerchantRegistrationModule } from './merchant-registration/merchant-registration.module';
+// import * as crypto from 'crypto';
 
 
 @Module({
@@ -37,23 +37,23 @@ import * as crypto from 'crypto';
     }),
 
     // Mailer module
-   MailerModule.forRootAsync({
-  imports: [ConfigModule],
-  useFactory: (configService: ConfigService) => ({
-    transport: {
-      host: configService.get<string>('SMTP_HOST'),
-      port: configService.get<number>('SMTP_PORT'),
-      auth: {
-        user: configService.get<string>('SMTP_USER'),
-        pass: configService.get<string>('SMTP_PASS'),
-      },
-    },
-    defaults: {
-      from: '"MTS Support" <mtsindialtd999@gmail.com>',
-    },
-  }),
-  inject: [ConfigService],
-}),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get<string>('SMTP_HOST'),
+          port: configService.get<number>('SMTP_PORT'),
+          auth: {
+            user: configService.get<string>('SMTP_USER'),
+            pass: configService.get<string>('SMTP_PASS'),
+          },
+        },
+        defaults: {
+          from: '"MTS Support" <mtsindialtd999@gmail.com>',
+        },
+      }),
+      inject: [ConfigService],
+    }),
 
     UsersModule,
     AuthModule,
@@ -63,6 +63,7 @@ import * as crypto from 'crypto';
     AdvertisementsModule,
     AdvertisementRegistrationModule,
     FreeBookingsModule,
+    MerchantRegistrationModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

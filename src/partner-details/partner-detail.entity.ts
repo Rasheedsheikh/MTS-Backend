@@ -1,4 +1,5 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { MerchantRegistration } from 'src/merchant-registration/entities/merchant-registration.entity';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'partner_details' })
 export class PartnerDetail {
@@ -53,6 +54,12 @@ export class PartnerDetail {
 
 	@Column({ nullable: true })
 	upiId?: string; // Optional UPI ID
+
+	@Column({ nullable: true })
+	razorpayAccountId?: string; // Razorpay account ID for transfers
+
+	@OneToMany(() => MerchantRegistration, merchant => merchant.partner)
+	merchants?: MerchantRegistration[];
 
 	@BeforeInsert()
 	@BeforeUpdate()

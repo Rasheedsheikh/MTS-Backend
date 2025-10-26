@@ -1,0 +1,21 @@
+# Enforce LF line endings for text files in this repository
+# This helps prevent accidental CRLF commits from Windows machines
+
+# Auto-detect text files and normalize to LF in the repository
+* text=auto eol=lf
+
+# Shell scripts should always use LF
+*.sh text eol=lf
+
+# Keep PowerShell scripts with CRLF on Windows (optional)
+*.ps1 text eol=crlf
+
+# Images and binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.jar binary
+*.exe binary
