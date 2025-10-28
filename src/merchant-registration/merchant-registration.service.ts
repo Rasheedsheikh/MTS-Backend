@@ -26,8 +26,8 @@ export class MerchantRegistrationService {
   async createPaymentOrder(dto: CreatePaymentOrderDto) {
     console.log('🔍 Creating payment order for merchant registration...');
     
-    // Create Razorpay order for ₹2
-    const razorpayOrder = await this.razorpayService.createOrder(2);
+    // Create Razorpay order for ₹1199
+    const razorpayOrder = await this.razorpayService.createOrder(1199);
 
     return {
       razorpayOrder: {
@@ -95,7 +95,7 @@ export class MerchantRegistrationService {
       razorpayOrderId: completeDto.orderId,
       razorpayPaymentId: completeDto.paymentId,
       razorpaySignature: completeDto.signature,
-      amount: 2.00,
+      amount: 1199.00,
       paymentStatus: 'completed',
       isPaymentCompleted: true,
     });
@@ -113,7 +113,7 @@ export class MerchantRegistrationService {
           
           // Only transfer if partner has a razorpayAccountId configured
           if (partner.razorpayAccountId) {
-            await this.paymentService.transferToPartner(0.33 * 2 * 100, partner);
+            await this.paymentService.transferToPartner(0.33 * 1199 * 100, partner);
             console.log('✅ Partner commission transferred successfully');
           } else {
             console.log('⚠️ Partner commission skipped - no Razorpay account configured');
@@ -145,8 +145,8 @@ export class MerchantRegistrationService {
       });
     }
 
-    // ✅ Create Razorpay payment (₹2)
-    const payment = await this.paymentService.createOrder(2 * 100, 'INR', 'Merchant Registration');
+    // ✅ Create Razorpay payment (₹1199)
+    const payment = await this.paymentService.createOrder(1199 * 100, 'INR', 'Merchant Registration');
 
     if (!payment) {
       throw new BadRequestException('Payment could not be initialized');

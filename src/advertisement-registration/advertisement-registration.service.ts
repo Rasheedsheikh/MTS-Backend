@@ -19,8 +19,8 @@ export class AdvertisementRegistrationService {
 
   // Step 1: Create payment order (don't create advertisement yet)
   async createPaymentOrder(dto: CreatePaymentOrderDto) {
-    // Create Razorpay order for ₹1
-    const razorpayOrder = await this.razorpayService.createOrder(1);
+    // Create Razorpay order for ₹2999
+    const razorpayOrder = await this.razorpayService.createOrder(2999);
 
     return {
       razorpayOrder: {
@@ -83,7 +83,7 @@ export class AdvertisementRegistrationService {
     ad.sliderType = completeDto.sliderType || '';
     ad.startDate = completeDto.startDate ? new Date(completeDto.startDate) : null;
     ad.endDate = completeDto.endDate ? new Date(completeDto.endDate) : null;
-    ad.amount = 1.00;
+    ad.amount = 2999.00;
     ad.razorpayOrderId = completeDto.orderId;
     ad.razorpayPaymentId = completeDto.paymentId;
     ad.razorpaySignature = completeDto.signature;

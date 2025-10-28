@@ -18,11 +18,37 @@ export class AdvertisementRegistrationController {
   // Step 2: Complete advertisement after successful payment
   @Post('complete-advertisement')
   @UseInterceptors(FileInterceptor('image'))
-  completeAdvertisement(
-    @Body() completeDto: CompleteAdvertisementDto,
+  async completeAdvertisement(
+    @Body() body: any,
     @UploadedFile() file?: Express.Multer.File
   ) {
-    return this.advertisementRegistrationService.completeAdvertisement(completeDto, file);
+    try {
+      console.log('🔍 Received complete advertisement request');
+      console.log('🔍 Body keys:', Object.keys(body));
+      console.log('🔍 File:', file ? `Present: ${file.originalname}` : 'Not present');
+      
+      // Parse the FormData into DTO
+      const completeDto: CompleteAdvertisementDto = {
+        orderId: body.orderId,
+        paymentId: body.paymentId,
+        signature: body.signature,
+        imageUrl: body.imageUrl || '',
+        title: body.title,
+        description: body.description || '',
+        location: body.location,
+        mobileNumber: body.mobileNumber,
+        sliderType: body.sliderType || '',
+        startDate: body.startDate || '',
+        endDate: body.endDate || '',
+      };
+      
+      console.log('🔍 Parsed DTO:', completeDto);
+      
+      return await this.advertisementRegistrationService.completeAdvertisement(completeDto, file);
+    } catch (error) {
+      console.error('❌ Error in completeAdvertisement:', error);
+      throw error;
+    }
   }
 
   // Alternative: Complete advertisement with form data (for frontend convenience)

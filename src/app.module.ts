@@ -12,6 +12,7 @@ import { FreeBookingsModule } from './free-bookings/free-bookings.module';
 // import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MerchantRegistrationModule } from './merchant-registration/merchant-registration.module';
+import { CategoriesModule } from './categories/categories.module';
 // import * as crypto from 'crypto';
 
 
@@ -64,6 +65,7 @@ import { MerchantRegistrationModule } from './merchant-registration/merchant-reg
     AdvertisementRegistrationModule,
     FreeBookingsModule,
     MerchantRegistrationModule,
+    CategoriesModule,
   ],
 })
 export class AppModule { }
