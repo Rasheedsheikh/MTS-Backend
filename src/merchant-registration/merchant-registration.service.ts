@@ -176,12 +176,30 @@ export class MerchantRegistrationService {
   }
 
   async getPartnerCodes() {
-    const partners = await this.partnerRepo.find({
-      select: ['partnerCode'],
-      where: {} // You can add filters here if needed
-    });
-    
-    return partners.map(p => p.partnerCode).filter(Boolean);
+    try {
+      console.log('🔍 Fetching partner codes from partner_details table...');
+      
+      // Fetch all partners - TypeORM works better when fetching full entities
+      const partners = await this.partnerRepo.find({
+        order: { partnerCode: 'ASC' }
+      });
+      
+      console.log('🔍 Found partners:', partners.length);
+      
+      // Extract partner codes and filter out null/empty values
+      const codes = partners
+        .map(p => p.partnerCode)
+        .filter(code => code && code.trim() !== '')
+        .sort(); // Sort alphabetically
+      
+      console.log('🔍 Valid partner codes:', codes);
+      
+      return codes;
+    } catch (error) {
+      console.error('❌ Error fetching partner codes:', error);
+      console.error('❌ Error details:', error.message);
+      throw new BadRequestException('Failed to fetch partner codes: ' + error.message);
+    }
   }
 
   async findOne(id: string) {
