@@ -13,7 +13,7 @@ import { FreeBookingsModule } from './free-bookings/free-bookings.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MerchantRegistrationModule } from './merchant-registration/merchant-registration.module';
 import { CategoriesModule } from './categories/categories.module';
-// import * as crypto from 'crypto';
+import * as crypto from 'crypto';
 
 
 @Module({

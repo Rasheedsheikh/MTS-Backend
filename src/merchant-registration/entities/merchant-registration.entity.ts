@@ -63,4 +63,6 @@ export class MerchantRegistration {
 
   @UpdateDateColumn()
   updatedAt?: Date;
+
+  
 }

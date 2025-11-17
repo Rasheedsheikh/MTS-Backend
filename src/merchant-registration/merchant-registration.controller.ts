@@ -59,6 +59,13 @@ export class MerchantRegistrationController {
     }
   }
 
+  // Create merchant registration without payment
+  @Post('create-without-payment')
+  @UseInterceptors(FileInterceptor('shopImage'))
+  createWithoutPayment(@Body() dto: CreateMerchantDto, @UploadedFile() file?: Express.Multer.File) {
+    return this.service.createWithoutPayment(dto, file);
+  }
+
   // Old create endpoint (kept for backward compatibility)
   @Post('create')
   @UseInterceptors(FileInterceptor('shopImage'))

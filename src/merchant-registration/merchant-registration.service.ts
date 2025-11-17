@@ -171,6 +171,58 @@ export class MerchantRegistrationService {
     };
   }
 
+  // Create merchant registration without payment
+  async createWithoutPayment(dto: CreateMerchantDto, file?: Express.Multer.File) {
+    console.log('🔍 Creating merchant registration without payment...');
+    
+    let shopImage = dto.shopImage;
+
+    // Upload to S3 if file exists
+    if (file) {
+      const key = `merchants/${Date.now()}-${file.originalname}`;
+      shopImage = await this.s3Service.uploadObject({
+        key,
+        body: file.buffer,
+        contentType: file.mimetype,
+      });
+    }
+
+    // Create merchant record without payment details
+    const merchantData: Partial<MerchantRegistration> = {
+      businessName: dto.businessName,
+      businessOwnerName: dto.businessOwnerName,
+      mobileNumber: dto.mobileNumber,
+      whatsappNumber: dto.whatsappNumber,
+      category: dto.category,
+      subcategory: dto.subcategory,
+      address: dto.address,
+      shopImage,
+      // Payment details set to default "no" values
+      razorpayOrderId: 'none',
+      razorpayPaymentId: 'none',
+      razorpaySignature: 'none',
+      amount: 0.00,
+      paymentStatus: 'pending',
+      isPaymentCompleted: false,
+    };
+
+    // Only set partnerCode if it's provided and not empty
+    if (dto.partnerCode && dto.partnerCode.trim() !== '') {
+      merchantData.partnerCode = dto.partnerCode;
+    }
+
+    const merchant = this.repo.create(merchantData);
+
+    console.log('🔍 Saving merchant to database (without payment)...');
+    const saved = await this.repo.save(merchant);
+    console.log('✅ Merchant saved successfully with ID:', saved.id);
+
+    return {
+      message: 'Merchant registered successfully (without payment)',
+      data: saved,
+    };
+  }
+
   async findAll() {
     return this.repo.find({ relations: ['partner'] });
   }
