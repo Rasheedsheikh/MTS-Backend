@@ -196,6 +196,7 @@ export class MerchantRegistrationService {
       category: dto.category,
       subcategory: dto.subcategory,
       address: dto.address,
+      cityName: dto.cityName,
       shopImage,
       // Payment details set to default "no" values
       razorpayOrderId: 'none',

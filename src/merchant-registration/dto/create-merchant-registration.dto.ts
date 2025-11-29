@@ -10,5 +10,6 @@ export class CreateMerchantDto {
   @IsOptional() @IsString() subcategory?: string;
   @IsOptional() @IsString() shopImage?: string;
   @IsOptional() @IsString() address?: string;
+  @IsOptional() @IsString() cityName?: string;
   @IsOptional() @IsString() partnerCode?: string;
 }

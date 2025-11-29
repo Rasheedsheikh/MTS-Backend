@@ -31,6 +31,9 @@ export class MerchantRegistration {
   address?: string;
 
   @Column({ nullable: true })
+  cityName?: string;
+
+  @Column({ nullable: true })
   partnerCode?: string; // FK to PartnerDetail.partnerCode
 
   // Payment related fields
