@@ -20,12 +20,12 @@ export class MerchantRegistrationService {
     private readonly s3Service: S3Service,
     private readonly paymentService: PaymentService,
     private readonly razorpayService: RazorpayService,
-  ) {}
+  ) { }
 
   // Step 1: Create payment order (don't create merchant yet)
   async createPaymentOrder(dto: CreatePaymentOrderDto) {
     console.log('🔍 Creating payment order for merchant registration...');
-    
+
     // Create Razorpay order for ₹1199
     const razorpayOrder = await this.razorpayService.createOrder(1199);
 
@@ -41,14 +41,17 @@ export class MerchantRegistrationService {
   }
 
   // Step 2: Complete merchant registration after successful payment
-  async completeRegistration(completeDto: CompleteMerchantDto, file?: Express.Multer.File) {
+  async completeRegistration(
+    completeDto: CompleteMerchantDto,
+    file?: Express.Multer.File,
+  ) {
     console.log('🔍 Starting merchant registration completion...');
     console.log('🔍 Payment data:', {
       orderId: completeDto.orderId,
       paymentId: completeDto.paymentId,
       signature: completeDto.signature?.substring(0, 10) + '...',
       businessName: completeDto.businessName,
-      mobileNumber: completeDto.mobileNumber
+      mobileNumber: completeDto.mobileNumber,
     });
 
     // Verify Razorpay signature first
@@ -95,7 +98,7 @@ export class MerchantRegistrationService {
       razorpayOrderId: completeDto.orderId,
       razorpayPaymentId: completeDto.paymentId,
       razorpaySignature: completeDto.signature,
-      amount: 1199.00,
+      amount: 1199.0,
       paymentStatus: 'completed',
       isPaymentCompleted: true,
     });
@@ -107,22 +110,31 @@ export class MerchantRegistrationService {
     // Handle partner commission (33%)
     if (completeDto.partnerCode) {
       try {
-        const partner = await this.partnerRepo.findOne({ where: { partnerCode: completeDto.partnerCode } });
+        const partner = await this.partnerRepo.findOne({
+          where: { partnerCode: completeDto.partnerCode },
+        });
         if (partner) {
           console.log('🔍 Processing partner commission...');
-          
+
           // Only transfer if partner has a razorpayAccountId configured
           if (partner.razorpayAccountId) {
-            await this.paymentService.transferToPartner(0.33 * 1199 * 100, partner);
+            await this.paymentService.transferToPartner(
+              0.33 * 1199 * 100,
+              partner,
+            );
             console.log('✅ Partner commission transferred successfully');
           } else {
-            console.log('⚠️ Partner commission skipped - no Razorpay account configured');
+            console.log(
+              '⚠️ Partner commission skipped - no Razorpay account configured',
+            );
           }
         }
       } catch (error) {
         console.error('❌ Partner commission transfer failed:', error);
         // Don't fail the entire registration if commission transfer fails
-        console.log('⚠️ Continuing registration despite commission transfer failure');
+        console.log(
+          '⚠️ Continuing registration despite commission transfer failure',
+        );
       }
     }
 
@@ -146,7 +158,11 @@ export class MerchantRegistrationService {
     }
 
     // ✅ Create Razorpay payment (₹1199)
-    const payment = await this.paymentService.createOrder(1199 * 100, 'INR', 'Merchant Registration');
+    const payment = await this.paymentService.createOrder(
+      1199 * 100,
+      'INR',
+      'Merchant Registration',
+    );
 
     if (!payment) {
       throw new BadRequestException('Payment could not be initialized');
@@ -172,9 +188,12 @@ export class MerchantRegistrationService {
   }
 
   // Create merchant registration without payment
-  async createWithoutPayment(dto: CreateMerchantDto, file?: Express.Multer.File) {
+  async createWithoutPayment(
+    dto: CreateMerchantDto,
+    file?: Express.Multer.File,
+  ) {
     console.log('🔍 Creating merchant registration without payment...');
-    
+
     let shopImage = dto.shopImage;
 
     // Upload to S3 if file exists
@@ -202,7 +221,7 @@ export class MerchantRegistrationService {
       razorpayOrderId: 'none',
       razorpayPaymentId: 'none',
       razorpaySignature: 'none',
-      amount: 0.00,
+      amount: 0.0,
       paymentStatus: 'pending',
       isPaymentCompleted: false,
     };
@@ -225,33 +244,35 @@ export class MerchantRegistrationService {
   }
 
   async findAll() {
-    return this.repo.find({ relations: ['partner'] });
+    return this.repo.find();
   }
 
   async getPartnerCodes() {
     try {
       console.log('🔍 Fetching partner codes from partner_details table...');
-      
+
       // Fetch all partners - TypeORM works better when fetching full entities
       const partners = await this.partnerRepo.find({
-        order: { partnerCode: 'ASC' }
+        order: { partnerCode: 'ASC' },
       });
-      
+
       console.log('🔍 Found partners:', partners.length);
-      
+
       // Extract partner codes and filter out null/empty values
       const codes = partners
-        .map(p => p.partnerCode)
-        .filter(code => code && code.trim() !== '')
+        .map((p) => p.partnerCode)
+        .filter((code) => code && code.trim() !== '')
         .sort(); // Sort alphabetically
-      
+
       console.log('🔍 Valid partner codes:', codes);
-      
+
       return codes;
     } catch (error) {
       console.error('❌ Error fetching partner codes:', error);
       console.error('❌ Error details:', error.message);
-      throw new BadRequestException('Failed to fetch partner codes: ' + error.message);
+      throw new BadRequestException(
+        'Failed to fetch partner codes: ' + error.message,
+      );
     }
   }
 
@@ -266,7 +287,8 @@ export class MerchantRegistrationService {
 
   async remove(id: string) {
     const result = await this.repo.delete(id);
-    if (result.affected === 0) throw new BadRequestException('Merchant not found');
+    if (result.affected === 0)
+      throw new BadRequestException('Merchant not found');
     return { message: 'Merchant deleted successfully' };
   }
 }
