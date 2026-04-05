@@ -89,8 +89,24 @@ export class MerchantRegistrationController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: Partial<CreateMerchantDto>) {
-    return this.service.update(id, dto);
+  @UseInterceptors(FileInterceptor('shopImage'))
+  update(
+    @Param('id') id: string,
+    @Body() body: any,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    const dto: Partial<CreateMerchantDto> = {
+      businessName: body.businessName,
+      businessOwnerName: body.businessOwnerName,
+      mobileNumber: body.mobileNumber,
+      whatsappNumber: body.whatsappNumber,
+      category: body.category,
+      subcategory: body.subcategory,
+      address: body.address,
+      cityName: body.cityName,
+      partnerCode: body.partnerCode,
+    };
+    return this.service.update(id, dto, file);
   }
 
   @Delete(':id')

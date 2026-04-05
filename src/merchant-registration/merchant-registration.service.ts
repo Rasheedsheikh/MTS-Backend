@@ -280,7 +280,15 @@ export class MerchantRegistrationService {
     return this.repo.findOne({ where: { id }, relations: ['partner'] });
   }
 
-  async update(id: string, dto: Partial<CreateMerchantDto>) {
+  async update(id: string, dto: Partial<CreateMerchantDto>, file?: Express.Multer.File) {
+    if (file) {
+      const key = `merchants/${Date.now()}-${file.originalname}`;
+      dto.shopImage = await this.s3Service.uploadObject({
+        key,
+        body: file.buffer,
+        contentType: file.mimetype,
+      });
+    }
     await this.repo.update(id, dto);
     return this.findOne(id);
   }

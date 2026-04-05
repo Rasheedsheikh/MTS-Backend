@@ -16,7 +16,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('partner-details')
 export class PartnerDetailsController {
-  constructor(private readonly service: PartnerDetailsService) {}
+  constructor(private readonly service: PartnerDetailsService) { }
+
+
 
   // ✅ Create Partner Detail with optional image upload to S3
   @Post()
@@ -51,6 +53,4 @@ export class PartnerDetailsController {
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
-
-  
 }
